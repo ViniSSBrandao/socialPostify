@@ -1,0 +1,13 @@
+services:
+  dev-db:
+    image: postgres:15
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: strongpassword
+      POSTGRES_DB: social_postify
+    networks:
+      - social_postify
+networks:
+  social_postify:

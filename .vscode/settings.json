@@ -1,0 +1,15 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5433,
+      "driver": "PostgreSQL",
+      "name": "postify",
+      "group": "postgres",
+      "database": "social_postify",
+      "username": "postgres",
+      "password": "strongpassword"
+    }
+  ]
+}
