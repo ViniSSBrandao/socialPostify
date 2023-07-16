@@ -1,4 +1,11 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
-@Controller('user')
-export class UserController {}
+@Controller('test')
+export class UserController {
+  @UseGuards(AuthGuard('jwt'))
+  @Get()
+  findUser() {
+    return 'userInfo';
+  }
+}

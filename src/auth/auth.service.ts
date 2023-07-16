@@ -11,7 +11,10 @@ import { JwtService } from '@nestjs/jwt';
 @Injectable({})
 export class AuthService {
   constructor(private jwt: JwtService, private prisma: PrismaService) {}
-  async signin({ email, password }: AuthDto): Promise<string> {
+  async signin({
+    email,
+    password,
+  }: AuthDto): Promise<{ access_token: string }> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { email },
@@ -21,14 +24,19 @@ export class AuthService {
       }
 
       const testPassword = await argon.verify(user.password, password);
-      console.log(testPassword);
+
       if (!testPassword) {
         throw new UnauthorizedException('incorrect user or password');
       }
-      return this.signtoken({ userId: user.id, email: user.email });
+      return this.signToken({ userId: user.id, email: user.email });
     } catch (error) {}
   }
-  async signup({ email, password, avatar, name }: SignupDto): Promise<string> {
+  async signup({
+    email,
+    password,
+    avatar,
+    name,
+  }: SignupDto): Promise<{ access_token: string }> {
     const hashedPassword = await argon.hash(password);
     try {
       const user = await this.prisma.user.create({
@@ -39,23 +47,24 @@ export class AuthService {
           name,
         },
       });
-      return this.signtoken({ userId: user.id, email: user.email });
+      return this.signToken({ userId: user.id, email: user.email });
     } catch (error) {
       throw new ForbiddenException('Email already in use');
     }
   }
 
-  async signtoken({
+  async signToken({
     userId,
     email,
   }: {
     userId: number;
     email: string;
-  }): Promise<string> {
+  }): Promise<{ access_token: string }> {
     const payload = { sub: userId, email };
-    return this.jwt.signAsync(payload, {
-      expiresIn: '1d',
+    const token = await this.jwt.signAsync(payload, {
       secret: process.env.JWT_SECRET,
     });
+
+    return { access_token: token };
   }
 }
