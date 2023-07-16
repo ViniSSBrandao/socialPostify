@@ -16,9 +16,22 @@ model User {
   password  String  @db.VarChar(255)
   name  String  @db.VarChar(255)
   avatar String  
+  Session Session[]
   Publication Publication[]
+
+  @@map("Users")
 }
 
+model Session {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("Sessions")
+}
 model Publication{
   id Int @id @default(autoincrement())
   image String  
@@ -30,4 +43,6 @@ model Publication{
   socialMedia String
   userId Int  
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("publications")
 }
