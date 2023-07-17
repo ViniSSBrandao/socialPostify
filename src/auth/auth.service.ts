@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   UnauthorizedException,
@@ -51,7 +52,7 @@ export class AuthService {
       );
       return this.signToken({ userId: user.id, email: user.email });
     } catch (error) {
-      throw new UnauthorizedException('Email already in use');
+      throw new ConflictException('Email already in use');
     }
   }
 
