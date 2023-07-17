@@ -21,7 +21,6 @@ export class AuthService {
   }: AuthDto): Promise<{ access_token: string }> {
     try {
       const user = await this.authRepositories.findUser(email);
-
       if (!user) {
         throw new UnauthorizedException('incorrect user or password');
       }
@@ -32,7 +31,9 @@ export class AuthService {
         throw new UnauthorizedException('incorrect user or password');
       }
       return this.signToken({ userId: user.id, email: user.email });
-    } catch (error) {}
+    } catch (error) {
+      return error;
+    }
   }
   async signup({
     email,
@@ -50,7 +51,7 @@ export class AuthService {
       );
       return this.signToken({ userId: user.id, email: user.email });
     } catch (error) {
-      throw new ForbiddenException('Email already in use');
+      throw new UnauthorizedException('Email already in use');
     }
   }
 
