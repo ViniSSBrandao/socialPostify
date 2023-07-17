@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+} from '@nestjs/common';
 import { PublicationDto } from './dto';
 import { publicationRepositorie } from './publicartion.repositories';
 
@@ -17,6 +21,13 @@ export class PublicationService {
 
       return posts;
     } catch (error) {
+      if (
+        error.message.includes(
+          'Unique constraint failed on the fields: (`title`)',
+        )
+      ) {
+        throw new ConflictException('choose a differente title');
+      }
       throw new BadRequestException();
     }
   }
