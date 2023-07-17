@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsString,
   IsUrl,
+  Matches,
 } from 'class-validator';
 
 export class PublicationDto {
@@ -19,7 +20,10 @@ export class PublicationDto {
   @IsString()
   text: string;
 
-  @IsDateString()
+  @IsDateString({ strict: true })
+  @Matches(/^\d{4}-\d{2}-\d{2}$/, {
+    message: `Date must be on the format 'YYYY-MM-DD'`,
+  })
   dateToPublish: string;
 
   @IsNotEmpty()

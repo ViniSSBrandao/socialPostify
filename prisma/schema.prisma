@@ -38,10 +38,11 @@ model Publication{
   title String  @unique @db.VarChar(255)
   text String
   dateToPublish DateTime?
-  CreatedAt DateTime @default(now())
+  userId Int  
   published   Boolean @default(false)
   socialMedia String
-  userId Int  
+
+  CreatedAt DateTime @default(now())
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("publications")
