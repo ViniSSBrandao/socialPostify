@@ -9,7 +9,10 @@ import { Request } from 'express';
 export class PublicationController {
   constructor(private publicationService: PublicationService) {}
   @Get('publications')
-  findPublications() {}
+  findPublications(@Req() req: Request) {
+    const { user } = req;
+    return this.publicationService.getPublications(user);
+  }
 
   @Post('publication')
   addPublications(@Body() dto: PublicationDto, @Req() req: Request) {

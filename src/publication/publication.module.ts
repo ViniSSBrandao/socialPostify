@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { PublicationService } from './publication.service';
 import { PublicationController } from './publication.controller';
+import { publicationRepositorie } from './publicartion.repositories';
 
 @Module({
-  providers: [PublicationService],
-  controllers: [PublicationController]
+  controllers: [PublicationController],
+  providers: [PublicationService, publicationRepositorie],
 })
 export class PublicationModule {}

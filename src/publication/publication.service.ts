@@ -1,41 +1,27 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { PublicationDto } from './dto';
-import { userDto } from 'src/auth/dto';
+import { publicationRepositorie } from './publicartion.repositories';
 
 @Injectable()
 export class PublicationService {
-  constructor(private prisma: PrismaService) {}
-  async postPublication(
-    {
-      published,
-      image,
-      text,
-      title,
-      dateToPublish,
-      socialMedia,
-    }: PublicationDto,
-    user,
-  ) {
+  constructor(
+    private readonly publicationRepositorie: publicationRepositorie,
+  ) {}
+
+  async postPublication(dto: PublicationDto, user) {
     try {
-      const posts = await this.prisma.publication.create({
-        data: {
-          published,
-          image,
-          text,
-          title,
-          dateToPublish: new Date(dateToPublish),
-          socialMedia,
-          userId: user.sub,
-        },
-      });
+      const posts = await this.publicationRepositorie.addPublications(
+        dto,
+        user.sub,
+      );
+
       return posts;
     } catch (error) {
-      console.log(error);
       throw new BadRequestException();
     }
   }
-  async getPublications() {
-    return 0;
+  async getPublications(user) {
+    const posts = await this.publicationRepositorie.findPublications(user.sub);
+    return posts;
   }
 }
