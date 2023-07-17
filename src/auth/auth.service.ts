@@ -7,18 +7,21 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { AuthDto, SignupDto } from './dto';
 import * as argon from 'argon2';
 import { JwtService } from '@nestjs/jwt';
+import { AuthRepositories } from './auth.repositories';
 
 @Injectable({})
 export class AuthService {
-  constructor(private jwt: JwtService, private prisma: PrismaService) {}
+  constructor(
+    private jwt: JwtService,
+    private authRepositories: AuthRepositories,
+  ) {}
   async signin({
     email,
     password,
   }: AuthDto): Promise<{ access_token: string }> {
     try {
-      const user = await this.prisma.user.findUnique({
-        where: { email },
-      });
+      const user = await this.authRepositories.findUser(email);
+
       if (!user) {
         throw new UnauthorizedException('incorrect user or password');
       }
@@ -39,14 +42,12 @@ export class AuthService {
   }: SignupDto): Promise<{ access_token: string }> {
     const hashedPassword = await argon.hash(password);
     try {
-      const user = await this.prisma.user.create({
-        data: {
-          email,
-          password: hashedPassword,
-          avatar,
-          name,
-        },
-      });
+      const user = await this.authRepositories.createUser(
+        email,
+        hashedPassword,
+        avatar,
+        name,
+      );
       return this.signToken({ userId: user.id, email: user.email });
     } catch (error) {
       throw new ForbiddenException('Email already in use');
