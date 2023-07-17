@@ -4,7 +4,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { PublicationDto } from './dto';
-import { publicationRepositorie } from './publicartion.repositories';
+import { publicationRepositorie } from './publication.repositories';
 
 @Injectable()
 export class PublicationService {
